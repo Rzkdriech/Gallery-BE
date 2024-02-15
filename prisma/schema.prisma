@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model album {
+  AlbumID       Int      @id @default(autoincrement())
+  NamaAlbum     String
+  Deskripsi     String
+  TanggalDibuat DateTime @default(now())
+  UserID        Int
+  User          user     @relation(fields: [UserID], references: [UserID], onDelete: Cascade, onUpdate: Cascade)
+  foto          foto[]
+}
+
+model foto {
+  FotoID        Int            @id @default(autoincrement())
+  JudulFoto     String
+  DeskripsiFoto String
+  TanggalUnggah DateTime       @default(now())
+  LokasiFile    String
+  AlbumID       Int
+  Album         album          @relation(fields: [AlbumID], references: [AlbumID], onDelete: Cascade, onUpdate: Cascade)
+  UserID        Int
+  User          user           @relation(fields: [UserID], references: [UserID], onDelete: Cascade, onUpdate: Cascade)
+  komentarfoto  komentarfoto[]
+  likefoto      likefoto[]
+}
+
+model komentarfoto {
+  KomentarID      Int      @id @default(autoincrement())
+  FotoID          Int
+  Foto            foto     @relation(fields: [FotoID], references: [FotoID], onDelete: Cascade, onUpdate: Cascade)
+  UserID          Int
+  User            user     @relation(fields: [UserID], references: [UserID], onDelete: Cascade, onUpdate: Cascade)
+  IsiKomentar     String
+  TanggalKomentar DateTime @default(now())
+}
+
+model likefoto {
+  LikeID      Int      @id @default(autoincrement())
+  FotoID      Int
+  Foto        foto     @relation(fields: [FotoID], references: [FotoID], onDelete: Cascade, onUpdate: Cascade)
+  UserID      Int
+  User        user     @relation(fields: [UserID], references: [UserID], onDelete: Cascade, onUpdate: Cascade)
+  TanggalLike DateTime @default(now())
+}
+
+model user {
+  UserID       Int            @id @default(autoincrement())
+  Username     String
+  Password     String
+  Email        String         @unique
+  NamaLengkap  String
+  Alamat       String
+  album        album[]
+  foto         foto[]
+  komentarfoto komentarfoto[]
+  likefoto     likefoto[]
+}
