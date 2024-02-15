@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,54 +9,65 @@ datasource db {
 
 model album {
   AlbumID       Int      @id @default(autoincrement())
-  NamaAlbum     String
-  Deskripsi     String
-  TanggalDibuat DateTime @default(now())
+  NamaAlbum     String   @db.VarChar(255)
+  Deskripsi     String   @db.Text
+  TanggalDibuat DateTime @db.Date
   UserID        Int
-  User          user     @relation(fields: [UserID], references: [UserID], onDelete: Cascade, onUpdate: Cascade)
+  user          user     @relation(fields: [UserID], references: [UserID], onDelete: Cascade, map: "album_ibfk_1")
   foto          foto[]
+
+  @@index([UserID], map: "UserID")
 }
 
 model foto {
   FotoID        Int            @id @default(autoincrement())
-  JudulFoto     String
-  DeskripsiFoto String
-  TanggalUnggah DateTime       @default(now())
-  LokasiFile    String
+  JudulFoto     String         @db.VarChar(255)
+  DeskripsiFoto String         @db.Text
+  TanggalUnggah DateTime       @db.Date
+  LokasiFile    String         @db.VarChar(255)
   AlbumID       Int
-  Album         album          @relation(fields: [AlbumID], references: [AlbumID], onDelete: Cascade, onUpdate: Cascade)
   UserID        Int
-  User          user           @relation(fields: [UserID], references: [UserID], onDelete: Cascade, onUpdate: Cascade)
+  album         album          @relation(fields: [AlbumID], references: [AlbumID], onDelete: Cascade, map: "foto_ibfk_1")
+  user          user           @relation(fields: [UserID], references: [UserID], onDelete: Cascade, map: "foto_ibfk_2")
   komentarfoto  komentarfoto[]
   likefoto      likefoto[]
+
+  @@index([AlbumID], map: "AlbumID")
+  @@index([UserID], map: "UserID")
 }
 
 model komentarfoto {
   KomentarID      Int      @id @default(autoincrement())
   FotoID          Int
-  Foto            foto     @relation(fields: [FotoID], references: [FotoID], onDelete: Cascade, onUpdate: Cascade)
   UserID          Int
-  User            user     @relation(fields: [UserID], references: [UserID], onDelete: Cascade, onUpdate: Cascade)
-  IsiKomentar     String
-  TanggalKomentar DateTime @default(now())
+  IsiKomentar     String   @db.Text
+  TanggalKomentar DateTime @db.Date
+  user            user     @relation(fields: [UserID], references: [UserID], onDelete: Cascade, map: "komentarfoto_ibfk_1")
+  foto            foto     @relation(fields: [FotoID], references: [FotoID], onDelete: Cascade, map: "komentarfoto_ibfk_2")
+
+  @@index([FotoID], map: "FotoID")
+  @@index([UserID], map: "UserID")
 }
 
 model likefoto {
   LikeID      Int      @id @default(autoincrement())
   FotoID      Int
-  Foto        foto     @relation(fields: [FotoID], references: [FotoID], onDelete: Cascade, onUpdate: Cascade)
   UserID      Int
-  User        user     @relation(fields: [UserID], references: [UserID], onDelete: Cascade, onUpdate: Cascade)
-  TanggalLike DateTime @default(now())
+  TanggalLike DateTime @db.Date
+  user        user     @relation(fields: [UserID], references: [UserID], onDelete: Cascade, map: "likefoto_ibfk_1")
+  foto        foto     @relation(fields: [FotoID], references: [FotoID], onDelete: Cascade, map: "likefoto_ibfk_2")
+
+  @@index([FotoID], map: "FotoID")
+  @@index([UserID], map: "UserID")
 }
 
 model user {
   UserID       Int            @id @default(autoincrement())
-  Username     String
-  Password     String
-  Email        String         @unique
-  NamaLengkap  String
-  Alamat       String
+  Username     String         @db.VarChar(255)
+  Password     String         @db.VarChar(255)
+  Email        String         @db.VarChar(255)
+  NamaLengkap  String         @db.VarChar(255)
+  Alamat       String         @db.Text
   album        album[]
   foto         foto[]
   komentarfoto komentarfoto[]
