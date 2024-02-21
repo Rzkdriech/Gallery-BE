@@ -8,19 +8,20 @@ const PORT = process.env.PORT;
 app.use(express.json());
 
 // session
-import session from "express-session"
+import session from "express-session";
 
-app.use(session({
-  name: 'rzk',
-  secret: process.env.SECRET_KEY,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: false,
-    maxAge: 60000
-  }
-})
-);
+// app.use(
+//   session({
+//     name: "rzk",
+//     secret: process.env.SECRET_KEY,
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//       secure: false,
+//       maxAge: 60000,
+//     },
+//   }),
+// );
 
 app.get("/", (_, res) => {
   res.send("Hello World");
