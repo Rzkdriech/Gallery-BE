@@ -4,7 +4,7 @@ export const getAlbum = async (_, res) => {
   try {
     const response = await PrismaInstance.prisma.album.findMany({
       include: {
-        User: true,
+        foto: true,
       },
     });
     res.status(200).json(response);
@@ -26,11 +26,12 @@ export const createAlbum = async (req, res) => {
     return res.status(400).json({ msg: "data exist!" });
 
   try {
+    const currentDate = new Date()
     const cAlbum = await PrismaInstance.prisma.album.create({
       data: {
         NamaAlbum: newAlbum.NamaAlbum,
         Deskripsi: newAlbum.Deskripsi,
-        TanggalDibuat: newAlbum.TanggalDibuat,
+        TanggalDibuat: currentDate,
         UserID: newAlbum.UserID,
       },
     });
