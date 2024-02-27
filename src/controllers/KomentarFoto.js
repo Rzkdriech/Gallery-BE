@@ -1,8 +1,8 @@
-import PrismaInstance from "../db/PrismaInstance.js";
+import { prisma } from "../db/PrismaInstance.js";
 
 export const getComments = async (_, res) => {
   try {
-    const response = await PrismaInstance.prisma.komentarfoto.findMany({
+    const response = await prisma.komentarfoto.findMany({
       include: {
         Foto: true,
         User: true,
@@ -17,7 +17,7 @@ export const getComments = async (_, res) => {
 export const createComment = async (req, res) => {
   const newComment = req.body;
 
-  const checkExist = await PrismaInstance.prisma.komentarfoto.findMany({
+  const checkExist = await prisma.komentarfoto.findMany({
     where: {
       TanggalKomentar: newComment.TanggalKomentar,
     },
@@ -26,12 +26,13 @@ export const createComment = async (req, res) => {
   if (checkExist.length > 0)
     return res.status(400).json({ msg: "data exist!!" });
   try {
-    const cComment = await PrismaInstance.prisma.komentarfoto.create({
+    const currentDate = new Date()
+    const cComment = await prisma.komentarfoto.create({
       data: {
         FotoID: newComment.FotoID,
         UserID: newComment.UserID,
         IsiKomentar: newComment.IsiKomentar,
-        TanggalKomentar: newComment.TanggalKomentar,
+        TanggalKomentar: currentDate,
       },
     });
     res.status(201).json({ msg: "data created", data: cComment });

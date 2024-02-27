@@ -1,11 +1,11 @@
-import PrismaInstance from "../db/PrismaInstance.js";
+import { prisma } from "../db/PrismaInstance.js";
 
 export const getPhotos = async (_, res) => {
   try {
-    const response = await PrismaInstance.prisma.foto.findMany({
+    const response = await prisma.foto.findMany({
       include: {
-        Album: true,
-        User: true,
+        komentarfoto: true,
+        likefoto: true,
       },
     });
     res.status(200).json(response);
@@ -17,7 +17,7 @@ export const getPhotos = async (_, res) => {
 export const createPhoto = async (req, res) => {
   const newFoto = req.body;
 
-  const checkFoto = await PrismaInstance.prisma.foto.findMany({
+  const checkFoto = await prisma.foto.findMany({
     where: {
       JudulFoto: newFoto.JudulFoto,
       UserID: newFoto.UserID,
@@ -27,11 +27,12 @@ export const createPhoto = async (req, res) => {
   if (checkFoto.length > 0) return res.status(400).json({ msg: "data exists" });
 
   try {
-    const cFoto = await PrismaInstance.prisma.foto.create({
+    const currentDate = new Date()
+    const cFoto = await prisma.foto.create({
       data: {
         JudulFoto: newFoto.JudulFoto,
         DeskripsiFoto: newFoto.DeskripsiFoto,
-        TanggalUnggah: newFoto.TanggalUnggah,
+        TanggalUnggah: currentDate,
         LokasiFile: newFoto.LokasiFile,
         AlbumID: newFoto.AlbumID,
         UserID: newFoto.UserID,
