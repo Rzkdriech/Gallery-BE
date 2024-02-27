@@ -1,8 +1,8 @@
-import PrismaInstance from "../db/PrismaInstance.js";
+import { prisma } from "../db/PrismaInstance.js";
 
 export const getUsers = async (_, res) => {
   try {
-    const response = await PrismaInstance.prisma.user.findMany();
+    const response = await prisma.user.findMany();
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ msg: error.message });
@@ -17,7 +17,7 @@ export const createUser = async (req, res) => {
   if (Password != ConfPass)
     return res.status(400).json({ msg: "Pastikan password anda benar" });
 
-  const checkUser = await PrismaInstance.prisma.user.findMany({
+  const checkUser = await prisma.user.findMany({
     where: {
       Email: newUser.Email,
     },
@@ -26,7 +26,7 @@ export const createUser = async (req, res) => {
   if (checkUser.length > 0) return res.status(400).json({ msg: "User exist" });
 
   try {
-    const user = await PrismaInstance.prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         Username: newUser.Username,
         Password: Password,
@@ -45,7 +45,7 @@ export const deleteUser = async (req, res) => {
   const paramsId = req.params.id;
 
   try {
-    const delUser = await PrismaInstance.prisma.user.delete({
+    const delUser = await prisma.user.delete({
       where: {
         Email: paramsId,
       },
@@ -61,7 +61,7 @@ export const updateUser = async (req, res) => {
   const upUserData = req.body;
 
   try {
-    const upUser = await PrismaInstance.prisma.user.update({
+    const upUser = await prisma.user.update({
       where: {
         Email: paramsId,
       },

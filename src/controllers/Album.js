@@ -1,8 +1,8 @@
-import PrismaInstance from "../db/PrismaInstance.js";
+import { prisma } from "../db/PrismaInstance.js";
 
 export const getAlbum = async (_, res) => {
   try {
-    const response = await PrismaInstance.prisma.album.findMany({
+    const response = await prisma.album.findMany({
       include: {
         foto: true,
       },
@@ -16,7 +16,7 @@ export const getAlbum = async (_, res) => {
 export const createAlbum = async (req, res) => {
   const newAlbum = req.body;
 
-  const checkAlbum = await PrismaInstance.prisma.album.findMany({
+  const checkAlbum = await prisma.album.findMany({
     where: {
       NamaAlbum: newAlbum.NamaAlbum,
     },
@@ -27,7 +27,7 @@ export const createAlbum = async (req, res) => {
 
   try {
     const currentDate = new Date()
-    const cAlbum = await PrismaInstance.prisma.album.create({
+    const cAlbum = await prisma.album.create({
       data: {
         NamaAlbum: newAlbum.NamaAlbum,
         Deskripsi: newAlbum.Deskripsi,
@@ -46,7 +46,7 @@ export const updateAlbum = async (req, res) => {
   const upAlbumData = req.body;
 
   try {
-    const upAlbum = await PrismaInstance.prisma.album.update({
+    const upAlbum = await prisma.album.update({
       where: {
         AlbumID: paramsId,
         UserID: paramsId,

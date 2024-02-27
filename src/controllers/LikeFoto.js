@@ -1,8 +1,8 @@
-import PrismaInstance from "../db/PrismaInstance.js";
+import { prisma } from "../db/PrismaInstance.js";
 
 export const getLikes = async (_, res) => {
   try {
-    const response = await PrismaInstance.prisma.likefoto.findMany({
+    const response = await prisma.likefoto.findMany({
       include: {
         Foto: true,
         User: true,
@@ -17,7 +17,7 @@ export const getLikes = async (_, res) => {
 export const createLike = async (req, res) => {
   const newLike = req.body;
 
-  const checkExist = await PrismaInstance.prisma.likefoto.findMany({
+  const checkExist = await prisma.likefoto.findMany({
     where: {
       TanggalLike: newLike.TanggalLike,
     },
@@ -26,11 +26,12 @@ export const createLike = async (req, res) => {
   if (checkExist.length > 0)
     return res.status(400).json({ msg: "data exist!" });
   try {
-    const cLike = await PrismaInstance.prisma.likefoto.create({
+    const currentDate = new Date()
+    const cLike = await prisma.likefoto.create({
       data: {
         FotoID: newLike.FotoID,
         UserID: newLike.UserID,
-        TanggalLike: newLike.TanggalLike,
+        TanggalLike: currentDate,
       },
     });
     res.status(201).json({ msg: "data created", data: cLike });
